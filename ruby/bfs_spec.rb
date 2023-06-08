@@ -22,4 +22,19 @@ RSpec.describe GridBFS do
       expect(bfs.distances_from [1, 0]).to eq [[1, 2, 3], [0, 1, 2], [1, 2, 3]]
     end
   end
+
+  describe '#weighted_distances_from coord' do
+    it 'raises ArgumentError if coords are not on the grid.' do
+      bfs = GridBFS.new([[1,2], [2,1]])
+      expect { bfs.weighted_distances_from [1, 2] }.to raise_exception ArgumentError
+      expect { bfs.weighted_distances_from [2, 0] }.to raise_exception ArgumentError
+    end
+
+    it 'returns a grid with the distances from the coord.' do
+      bfs = GridBFS.new([[2, 2, 4], [5, 1, 0], [3, 7, 8]])
+      expect(bfs.weighted_distances_from [1, 1]).to eq [[3, 1, 1], [1, 0, 1], [6, 1, 1]]
+      expect(bfs.weighted_distances_from [0, 0]).to eq [[0, 2, 4], [2, 4, 5], [7, 5, 5]]
+      expect(bfs.weighted_distances_from [1, 0]).to eq [[5, 6, 6], [0, 5, 6], [5, 6, 6]]
+    end
+  end
 end
