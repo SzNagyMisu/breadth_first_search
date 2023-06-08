@@ -64,3 +64,48 @@ class GridBFS
     !!(x >= 0 && y >= 0 && @grid[x] && @grid[x][y])
   end
 end
+
+class GraphBFS
+  attr_reader :graph
+
+  def initialize nodes, links
+    @graph = {
+      nodes: nodes,
+      links: links,
+    }
+    validate_links!
+  end
+
+  def distances_from idx
+    nodes_count = @graph[:nodes].size
+    raise ArgumentError unless (0...nodes_count) === idx
+
+    queue = [idx]
+    distances = Array.new nodes_count
+    distances[idx] = 0
+
+    until queue.empty?
+      current_idx = queue.shift
+      @graph[:links].each do |link|
+        if link.include? current_idx
+          next_idx, = link - [current_idx]
+          if distances[next_idx].nil?
+            queue << next_idx
+            distances[next_idx] = distances[current_idx] + 1
+          end
+        end
+      end
+    end
+
+    distances
+  end
+
+  private
+
+  def validate_links!
+    node_idxs = @graph[:nodes].each_index.to_a
+    @graph[:links].each do |link|
+      raise ArgumentError unless (link - node_idxs).empty?
+    end
+  end
+end

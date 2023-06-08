@@ -38,3 +38,35 @@ RSpec.describe GridBFS do
     end
   end
 end
+
+RSpec.describe GraphBFS do
+  describe 'initialization' do
+    it 'stores given nodes and links in the #graph hash.' do
+      bfs = GraphBFS.new [0, 0, 0], [[0, 1], [0, 2], [1, 2]]
+      expect(bfs.graph).to eq nodes: [0, 0, 0], links: [[0, 1], [0, 2], [1, 2]]
+    end
+
+    it 'raises ArgumentError if not all links connect to existing nodes.' do
+      expect { GraphBFS.new [0, 0, 0], [[0, 1], [0, 3]] }.to raise_exception ArgumentError
+    end
+  end
+
+  describe '#distances_from idx' do
+    it 'raises ArgumentError if index given is not in the nodes.' do
+      bfs = GraphBFS.new [0, 0, 0], [[0, 1], [1, 2]]
+      expect { bfs.distances_from 3 }.to raise_exception ArgumentError
+      expect { bfs.distances_from -1 }.to raise_exception ArgumentError
+    end
+
+    it 'returns the list of distances when there is only one way.' do
+      bfs = GraphBFS.new [0, 0, 0], [[0, 1], [1, 2]]
+      expect(bfs.distances_from 0).to eq [0, 1, 2]
+      expect(bfs.distances_from 1).to eq [1, 0, 1]
+    end
+
+    it 'returns the list of distances when there are more ways.' do
+      bfs = GraphBFS.new [0] * 5, [[0, 1], [0, 2], [1, 3], [3, 4], [2, 4]]
+      expect(bfs.distances_from 0).to eq [0, 1, 1, 2, 2]
+    end
+  end
+end
