@@ -37,7 +37,8 @@ class GridBFS
 
     until queue.empty?
       while coord_ready = queue.find { |x, y, duration| duration == 0 }
-        x_curr, y_curr = coord_ready
+        x_curr, y_curr, _ = coord_ready
+        queue.reject! { |x, y, duration| [x, y] == [x_curr, y_curr] }
         if dist_grid[x_curr][y_curr].nil?
           dist_grid[x_curr][y_curr] = time
           [[1, 0], [-1, 0], [0, 1], [0, -1]].each do |x_dir, y_dir|
@@ -47,7 +48,6 @@ class GridBFS
             end
           end
         end
-        queue.reject! { |x, y, duration| [x, y] == [x_curr, y_curr] }
       end
 
       queue.each { |item| item[2] -= 1 }
@@ -95,6 +95,39 @@ class GraphBFS
           end
         end
       end
+    end
+
+    distances
+  end
+
+  def weighted_distances_from idx
+    nodes = @graph[:nodes]
+    nodes_count = nodes.size
+    raise ArgumentError unless (0...nodes_count) === idx
+
+    time = 0
+    duration = nodes[idx]
+    distances = Array.new nodes_count
+    distances[idx] = time
+    queue = [[idx, duration]]
+
+    until queue.empty?
+      while ready_queue_item = queue.find { |idx, duration| duration == 0 }
+        current_idx, = ready_queue_item
+        queue.reject! { |idx, duration| idx === current_idx }
+        @graph[:links].each do |link|
+          if link.include? current_idx
+            next_idx, = link - [current_idx]
+            if distances[next_idx].nil?
+              queue << [next_idx, nodes[next_idx]]
+              distances[next_idx] = time
+            end
+          end
+        end
+      end
+
+      queue.each { |item| item[1] -= 1 }
+      time += 1
     end
 
     distances
