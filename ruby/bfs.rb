@@ -77,13 +77,16 @@ class GraphBFS
     validate_links!
   end
 
-  def distances_from idx
+  def distances_from *indexes
     nodes_count = @graph[:nodes].size
-    raise ArgumentError unless (0...nodes_count) === idx
+    raise ArgumentError unless indexes.all? { |idx| (0...nodes_count) === idx }
 
-    queue = [idx]
+    queue = []
     distances = Array.new nodes_count
-    distances[idx] = 0
+    indexes.each do |idx|
+      queue << idx
+      distances[idx] = 0
+    end
 
     until queue.empty?
       current_idx = queue.shift
@@ -101,16 +104,18 @@ class GraphBFS
     distances
   end
 
-  def weighted_distances_from idx
+  def weighted_distances_from *indexes
     nodes = @graph[:nodes]
     nodes_count = nodes.size
-    raise ArgumentError unless (0...nodes_count) === idx
+    raise ArgumentError unless indexes.all? { |idx| (0...nodes_count) === idx }
 
     time = 0
-    duration = nodes[idx]
     distances = Array.new nodes_count
-    distances[idx] = time
-    queue = [[idx, duration]]
+    queue = []
+    indexes.each do |idx|
+      distances[idx] = time
+      queue << [idx, nodes[idx]]
+    end
 
     until queue.empty?
       while ready_queue_item = queue.find { |idx, duration| duration == 0 }

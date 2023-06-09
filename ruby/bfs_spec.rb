@@ -78,6 +78,16 @@ RSpec.describe GraphBFS do
       bfs = GraphBFS.new [0] * 5, [[0, 1], [0, 2], [1, 3], [3, 4], [2, 4]]
       expect(bfs.distances_from 0).to eq [0, 1, 1, 2, 2]
     end
+
+    it 'gives nil for nodes that are not reachable.' do
+      bfs = GraphBFS.new [0] * 5, [[0, 1], [0, 2], [2, 4]]
+      expect(bfs.distances_from 0).to eq [0, 1, 1, nil, 2]
+    end
+
+    it 'works with mulptiple starting points.' do
+      bfs = GraphBFS.new [0] * 5, [[0, 1], [0, 2], [1, 3], [3, 4], [2, 4]]
+      expect(bfs.distances_from 0, 3).to eq [0, 1, 1, 0, 1]
+    end
   end
 
   describe '#weighted_distances_from idx' do
@@ -96,6 +106,11 @@ RSpec.describe GraphBFS do
     it 'returns the list of distances when there are more ways.' do
       bfs = GraphBFS.new [2, 1, 7, 2, 3], [[0, 1], [0, 2], [1, 3], [3, 4], [2, 4]]
       expect(bfs.weighted_distances_from 0).to eq [0, 2, 2, 3, 5]
+    end
+
+    it 'works with multiple starting points.' do
+      bfs = GraphBFS.new [2, 1, 7, 2, 1], [[0, 1], [0, 2], [1, 3], [3, 4], [2, 4]]
+      expect(bfs.weighted_distances_from 0, 4).to eq [0, 2, 1, 1, 0]
     end
   end
 end
