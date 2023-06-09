@@ -5,13 +5,15 @@ class GridBFS
     @grid = grid
   end
 
-  def distances_from coord
-    raise ArgumentError unless in_grid? coord
+  def distances_from *coords
+    raise ArgumentError unless coords.all? { |coord| in_grid? coord }
 
-    x, y = coord
     dist_grid = Array.new(@grid.size) { Array.new @grid.first.size }
-    dist_grid[x][y] = 0
-    queue = [[x, y]]
+    queue = []
+    coords.each do |x, y|
+      dist_grid[x][y] = 0
+      queue << [x, y]
+    end
 
     until queue.empty?
       x_curr, y_curr = queue.shift
@@ -27,13 +29,12 @@ class GridBFS
     dist_grid
   end
 
-  def weighted_distances_from coord
-    raise ArgumentError unless in_grid? coord
+  def weighted_distances_from *coords
+    raise ArgumentError unless coords.all? { |coord| in_grid? coord }
 
-    x, y = coord
     time = 0
     dist_grid = Array.new(@grid.size) { Array.new @grid.first.size }
-    queue = [[x, y, time]]
+    queue = coords.map { |x, y| [x, y, time] }
 
     until queue.empty?
       while coord_ready = queue.find { |x, y, duration| duration == 0 }

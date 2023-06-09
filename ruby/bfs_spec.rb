@@ -21,6 +21,11 @@ RSpec.describe GridBFS do
       expect(bfs.distances_from [0, 0]).to eq [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
       expect(bfs.distances_from [1, 0]).to eq [[1, 2, 3], [0, 1, 2], [1, 2, 3]]
     end
+
+    it 'works with multiple starting points' do
+      bfs = GridBFS.new([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+      expect(bfs.distances_from [0, 1], [1, 2]).to eq [[1, 0, 1], [2, 1, 0], [3, 2, 1]]
+    end
   end
 
   describe '#weighted_distances_from coord' do
@@ -35,6 +40,11 @@ RSpec.describe GridBFS do
       expect(bfs.weighted_distances_from [1, 1]).to eq [[3, 1, 1], [1, 0, 1], [6, 1, 1]]
       expect(bfs.weighted_distances_from [0, 0]).to eq [[0, 2, 4], [2, 4, 5], [7, 5, 5]]
       expect(bfs.weighted_distances_from [1, 0]).to eq [[5, 6, 6], [0, 5, 6], [5, 6, 6]]
+    end
+
+    it 'works with multiple starting points.' do
+      bfs = GridBFS.new([[2, 2, 4], [5, 1, 0], [3, 7, 1]])
+      expect(bfs.weighted_distances_from [0, 1], [2, 2]).to eq [[2, 0, 1], [2, 1, 1], [7, 1, 0]]
     end
   end
 end
